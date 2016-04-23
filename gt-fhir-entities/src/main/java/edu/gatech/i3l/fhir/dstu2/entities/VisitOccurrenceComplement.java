@@ -3,7 +3,9 @@
  */
 package edu.gatech.i3l.fhir.dstu2.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -57,6 +59,7 @@ public class VisitOccurrenceComplement extends VisitOccurrence {
 		super(id, person, startDate, endDate, placeOfServiceConcept, careSite, placeOfServiceSourceValue);
 		
 		this.episodeOfCare = episodeOfCare;
+		this.status = status;
 		this.note = note;
 		
 	}
@@ -101,8 +104,11 @@ public class VisitOccurrenceComplement extends VisitOccurrence {
 		EpisodeOfCare episodeOfCare = getEpisodeOfCare();
 		if (episodeOfCare != null) {
 			ResourceReferenceDt episodeReference = new ResourceReferenceDt(new IdDt(EpisodeOfCare.RES_TYPE, episodeOfCare.getId()));
-			encounter.setEpisodeOfCare(episodeReference);
+			List<ResourceReferenceDt> episodeReferences = new ArrayList<ResourceReferenceDt>();
+			episodeReferences.add(episodeReference);
+			encounter.setEpisodeOfCare(episodeReferences);
 		}
+		
 
 		// set Reason
 		// TODO: note or linked condition may have this information.
@@ -114,12 +120,12 @@ public class VisitOccurrenceComplement extends VisitOccurrence {
 	public IResourceEntity constructEntityFromResource(IResource resource) {
 		super.constructEntityFromResource(resource);
 		Encounter encounter = (Encounter) resource;
-		String status = encounter.getStatus();
+		String status = encounter.getStatus().toString();
 		if(status != null){
 			EncounterStateEnum[] values = EncounterStateEnum.values();
 			for (int i = 0; i < values.length; i++) {
-				if(status.equals(values[i].getCode())){
-					this.setStatus(values[i].getCode());
+				if((status.toLowerCase()).equals((values[i].getCode().toLowerCase()))){
+					this.setStatus((values[i].getCode().toLowerCase()));
 					break;
 				}
 			}

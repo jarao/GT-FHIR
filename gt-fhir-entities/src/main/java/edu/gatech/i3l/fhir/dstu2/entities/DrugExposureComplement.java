@@ -2,6 +2,7 @@ package edu.gatech.i3l.fhir.dstu2.entities;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -23,7 +24,7 @@ import ca.uhn.fhir.context.FhirVersionEnum;
 @Entity
 @Table(name = "f_drug_exposure")
 @Audited
-public final class DrugExposurePrescriptionComplement {
+public final class DrugExposureComplement {
 	
 	@Id
 	@Column(name = "drug_exposure_id")
@@ -33,7 +34,7 @@ public final class DrugExposurePrescriptionComplement {
 	
 	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="drug_exposure_id")
-	private DrugExposurePrescription prescription;
+	private DrugExposure prescription;
 
 	/**
 	 * @fhir MedicationPrescription.dosageInstruction.dose.doseQuantity
@@ -75,11 +76,11 @@ public final class DrugExposurePrescriptionComplement {
 		this.unit = unit;
 	}
 
-	public DrugExposurePrescription getPrescription() {
+	public DrugExposure getPrescription() {
 		return prescription;
 	}
 
-	public void setPrescription(DrugExposurePrescription prescription) {
+	public void setPrescription(DrugExposure prescription) {
 		this.prescription = prescription;
 	}
 

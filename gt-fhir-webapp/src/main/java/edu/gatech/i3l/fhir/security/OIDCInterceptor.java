@@ -33,7 +33,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import ca.uhn.fhir.rest.method.OtherOperationTypeEnum;
+import ca.uhn.fhir.rest.api.RestOperationTypeEnum;
 import ca.uhn.fhir.rest.method.RequestDetails;
 import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
 import ca.uhn.fhir.rest.server.interceptor.InterceptorAdapter;
@@ -46,6 +46,7 @@ public class OIDCInterceptor extends InterceptorAdapter {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(OIDCInterceptor.class);
 
+	private String enableOAuth;
 	private String introspectUrl;
 	private String clientId;
 	private String clientSecret;
@@ -60,7 +61,12 @@ public class OIDCInterceptor extends InterceptorAdapter {
 
 		System.out.println("[OAuth] Request from " + theRequest.getRemoteAddr());
 
-		if (theRequestDetails.getOtherOperationType() == OtherOperationTypeEnum.METADATA) {
+		if (enableOAuth.equalsIgnoreCase("False")) {
+			System.out.println("[OAuth] OAuth is disabled. Request from " + theRequest.getRemoteAddr() + "is approved");
+			return true;
+		}
+		
+		if (theRequestDetails.getRestOperationType() == RestOperationTypeEnum.METADATA) {
 			System.out.println("This is METADATA request.");
 
 			// Enumeration<String> headerNames = theRequest.getHeaderNames();
@@ -133,6 +139,14 @@ public class OIDCInterceptor extends InterceptorAdapter {
 		return myAuth.allowRequest(theRequestDetails);
 	}
 
+	public String getEnableOAuth() {
+		return enableOAuth;
+	}
+	
+	public void setEnableOAuth(String enableOAuth) {
+		this.enableOAuth = enableOAuth;
+	}
+	
 	public String getIntrospectUrl() {
 		return introspectUrl;
 	}
